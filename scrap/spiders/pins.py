@@ -2,10 +2,10 @@
 import scrapy
 from scrapy.selector import Selector
 from scrapy.spiders import CSVFeedSpider
-from ccrecorder.items import CCpin14
+from scrap.items import CCpin14
 
 
-class RecordsSpider(CSVFeedSpider):
+class ScrapSpider(CSVFeedSpider):
     """
     Reads the pin feed csv file and parses the CC recorder
     for these pins.
