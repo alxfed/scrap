@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+import re
 from scrapy.selector import Selector
 from scrapy.spiders import CSVFeedSpider
 from scrap.items import CCname
@@ -45,7 +46,7 @@ class RecordsSpider(CSVFeedSpider):
         :param response:
         :return: yields a record or a bunch of records
         """
-        name_LIST_LINE_XPATH = '//*[@id="names_table"]/*[@id="objs_body"]/tr'  #//*[@id="objs_table"]
+        name_LIST_LINE_XPATH = '//table[@id="names_table"]/body[@id="objs_body"]//tr'  #//*[@id="objs_table"]
         name14_XPATH = '/td[1]/text()'
         STREET_ADDRESS_XPATH = '/td[2]/text()'
         CITY_XPATH = '/td[3]/text()'
@@ -53,7 +54,12 @@ class RecordsSpider(CSVFeedSpider):
         NO_nameS_FOUND_RESPONSE_XPATH = '//html/body/div[4]/div/div/div[2]/div/div/p[2]/text()' # where it can be
 
         # And now...
-        name14 = CCname14()
+        name = CCname()
+
+        # FUCK YOU, IDIOT SOCIOPATH DON GUERNCEY !!!
+        response = response.replace(body=response.body.replace('\n', ''))
+        response = response.replace(body=re.sub('>\s*<', '><', response.body, 0, re.M))
+        # FUCK YOU, IDIOT SOCIOPATH DON GUERNCEY !!!
 
         NOT_FOUND = response.xpath(NO_nameS_FOUND_RESPONSE_XPATH).get()  # what is there
         if NOT_FOUND:                                                   # ?  (can't do without this, because of None)
@@ -72,7 +78,7 @@ class RecordsSpider(CSVFeedSpider):
 
         else:                                                           # there is a name like that
             # Tried to iterate over selectors but it didn's work, this is a less elegant way
-            lines_list = response.xpath(name_LIST_LINE_XPATH).getall()
+            lines_list = response.xpath(name_LIST_LINE_XPATH)
             # extract the number(s) for the record(s), jump to the docs page
             # (as many times as necessary, come back every time when done
             for index, line in enumerate(lines_list):  # not to forget that 14 digit name gives 2 tables of results.

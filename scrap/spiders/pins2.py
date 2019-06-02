@@ -26,7 +26,9 @@ class ScrapSpider(CSVFeedSpider):
         """
         PIN_REQUEST_URL = 'https://www.ccrecorder.org/parcels/search/parcel/result/?line='
         pin = row['pin']                                                # the name of the column defined in 'headers'
-        yield scrapy.Request(url=PIN_REQUEST_URL + pin, callback=self.parse_pin_page, meta={'pin':pin})
+        yield scrapy.Request(url=PIN_REQUEST_URL + pin,
+                             callback=self.parse_pin_page,
+                             meta={'pin':pin})
 
     def parse_pin_page(self, response):
         """
@@ -37,19 +39,21 @@ class ScrapSpider(CSVFeedSpider):
         :param response:
         :return: yields a record or a bunch of records
         """
-        PIN_LIST_LINE_XPATH = '//*[@id="pins_table"]/*[@id="objs_body"]/tr'  #//*[@id="objs_table"]
-        PIN14_XPATH = '/td[1]/text()'
-        STREET_ADDRESS_XPATH = '/td[2]/text()'
-        CITY_XPATH = '/td[3]/text()'
-        RECORD_NUMBER_XPATH = '/td[4]/a/@href'
+        PIN_LIST_LINE_XPATH     = '//table[@id="pins_table"]/*[@id="objs_body"]//tr'  #//*[@id="objs_table"]
+        PIN14_XPATH             = 'td[1]/text()'
+        STREET_ADDRESS_XPATH    = 'td[2]/text()'
+        CITY_XPATH              = 'td[3]/text()'
+        RECORD_NUMBER_XPATH     = 'td[4]/a/@href'
         NO_PINS_FOUND_RESPONSE_XPATH = '//html/body/div[4]/div/div/div[2]/div/div/p[2]/text()' # where it can be
 
         # And now...
         pin14 = CCpin14()
 
         # FUCK YOU, IDIOT DON GUERNCEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
-        response = response.replace(body=response.body.replace('\n', ''))
-        response = response.replace(body=re.sub('>\s*<', '><', response.body, 0, re.M))
+        # response = response.replace(body=response.body.replace('\n', ''))
+        response = response.replace(body=re.sub('>\s*<', '><',
+                                                response.body.replace('\n', ''),
+                                                0, re.M))
         # FUCK YOU, IDIOT DON GUERNCEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
 
         NOT_FOUND = response.xpath(NO_PINS_FOUND_RESPONSE_XPATH).get()  # what is there
@@ -60,7 +64,6 @@ class ScrapSpider(CSVFeedSpider):
                     pin = pin + '0000'
                 pin14['pin'] = pin
                 pin14['pin_status'] = 'not'
-                #self.log('Not found PIN '+response.url)                 # Debug notification
                 yield pin14                                             # and get out of here.
 
             else:
@@ -69,17 +72,13 @@ class ScrapSpider(CSVFeedSpider):
 
         else:                                                           # there is a PIN like that
             # Tried to iterate over selectors but it didn's work, this is a less elegant way
-            lines_list = response.xpath(PIN_LIST_LINE_XPATH).getall()
+            lines_list = response.xpath(PIN_LIST_LINE_XPATH)
             # extract the number(s) for the record(s), jump to the docs page
             # (as many times as necessary, come back every time when done
-            for index, line in enumerate(lines_list):  # not to forget that 14 digit PIN gives 2 tables of results.
-                linear = str(index+1)
-                #self.log(line)
-                line_xpath = '{}[{}]'.format(PIN_LIST_LINE_XPATH, linear)
-                pin14['pin'] = response.xpath(line_xpath + PIN14_XPATH).get()
-                pin14['street_address'] = response.xpath(line_xpath + STREET_ADDRESS_XPATH).get()
-                pin14['city'] = response.xpath(line_xpath + CITY_XPATH).get().strip()             # strip removes trailing spaces
-                pin14['record_number'] = response.xpath(line_xpath + RECORD_NUMBER_XPATH).re('[.0-9]+')[0]
-                pin14['pin_status'] = 'valid'
-                #self.log(response.meta['pin'])
+            for line in lines_list:
+                pin14['pin']            = line.xpath(PIN14_XPATH).get()
+                pin14['street_address'] = line.xpath(STREET_ADDRESS_XPATH).get()
+                pin14['city']           = line.xpath(CITY_XPATH).get().strip()
+                pin14['record_number']  = line.xpath(RECORD_NUMBER_XPATH).re('[.0-9]+')[0]
+                pin14['pin_status']     = 'valid'
                 yield pin14
