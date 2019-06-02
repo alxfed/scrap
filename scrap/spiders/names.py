@@ -13,7 +13,7 @@ class RecordsSpider(CSVFeedSpider):
     """
     name = 'names'
     allowed_domains = ['ccrecorder.org']
-    start_urls = ['https://alxfed.github.io/docs/name_feed.csv']
+    start_urls = ['https://alxfed.github.io/docs/names_feed.csv']
     headers = ['name']
 
     def pre_processing(self, name):
