@@ -2,7 +2,7 @@
 import scrapy
 from scrapy.selector import Selector
 from scrapy.spiders import CSVFeedSpider
-from ccrecorder.items import CCname
+from scrap.items import CCname
 
 
 class RecordsSpider(CSVFeedSpider):
