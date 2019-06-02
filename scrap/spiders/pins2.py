@@ -49,12 +49,12 @@ class ScrapSpider(CSVFeedSpider):
         # And now...
         pin14 = CCpin14()
 
-        # FUCK YOU, IDIOT DON GUERNCEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
+        # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
         # response = response.replace(body=response.body.replace('\n', ''))
         response = response.replace(body=re.sub('>\s*<', '><',
                                                 response.body.replace('\n', ''),
                                                 0, re.M))
-        # FUCK YOU, IDIOT DON GUERNCEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
+        # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
 
         NOT_FOUND = response.xpath(NO_PINS_FOUND_RESPONSE_XPATH).get()  # what is there
         if NOT_FOUND:                                                   # ?  (can't do without this, because of None)
