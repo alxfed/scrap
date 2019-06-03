@@ -68,10 +68,10 @@ class RecordsSpider(CSVFeedSpider):
                 name = response.meta['name']
                 if len(name) < 14:
                     name = name + '0000'
-                name14['name'] = name
-                name14['name_status'] = 'not'
+                name['name'] = name
+                name['name_status'] = 'not'
                 #self.log('Not found name '+response.url)                 # Debug notification
-                yield name14                                             # and get out of here.
+                yield name                                             # and get out of here.
 
             else:
                 self.log('something is in the place of No names but it is not it')
@@ -86,10 +86,10 @@ class RecordsSpider(CSVFeedSpider):
                 linear = str(index+1)
                 #self.log(line)
                 line_xpath = '{}[{}]'.format(name_LIST_LINE_XPATH, linear)
-                name14['name'] = response.xpath(line_xpath + name14_XPATH).get()
-                name14['street_address'] = response.xpath(line_xpath + STREET_ADDRESS_XPATH).get()
-                name14['city'] = response.xpath(line_xpath + CITY_XPATH).get().strip()             # strip removes trailing spaces
-                name14['record_number'] = response.xpath(line_xpath + RECORD_NUMBER_XPATH).re('[.0-9]+')[0]
-                name14['name_status'] = 'valid'
+                name['name'] = response.xpath(line_xpath + name14_XPATH).get()
+                name['street_address'] = response.xpath(line_xpath + STREET_ADDRESS_XPATH).get()
+                name['city'] = response.xpath(line_xpath + CITY_XPATH).get().strip()             # strip removes trailing spaces
+                name['record_number'] = response.xpath(line_xpath + RECORD_NUMBER_XPATH).re('[.0-9]+')[0]
+                name['name_status'] = 'valid'
                 #self.log(response.meta['name'])
-                yield name14
+                yield name
