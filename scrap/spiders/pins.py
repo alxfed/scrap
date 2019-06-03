@@ -15,7 +15,7 @@ class ScrapSpider(CSVFeedSpider):
     name = 'pins'
     allowed_domains = ['ccrecorder.org']
     start_urls = ['https://alxfed.github.io/docs/pin_feed2.csv']        # the list of PINs to be verified.
-    headers = ['pin']
+    headers = ['pin']                                                   # the headers if there is a 'wide' table.
 
     def parse_row(self, response, row):
         """
