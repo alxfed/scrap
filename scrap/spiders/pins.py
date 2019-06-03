@@ -52,7 +52,7 @@ class ScrapSpider(CSVFeedSpider):
         response = response.replace(body=re.sub('>\s*<', '><',
                                                 response.body.replace('\n', ''),
                                                 0, re.M))
-        # Supid fuck dumped this shit all over the page to make in 'unscrapable'. Imbecile peasant from Indiana woods.
+        # Supid fuck dumped this shit on the page to make in 'unscrapable'. :) Imbecile peasant from Indiana woods.
 
         NOT_FOUND = response.xpath(NO_PINS_FOUND_RESPONSE_XPATH).get()  # what is there
         if NOT_FOUND:                                                   # ?  (can't do without this, because of None)
