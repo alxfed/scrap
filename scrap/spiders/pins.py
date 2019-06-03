@@ -50,7 +50,6 @@ class ScrapSpider(CSVFeedSpider):
         pin14 = CCpin14()
 
         # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
-        # response = response.replace(body=response.body.replace('\n', ''))
         response = response.replace(body=re.sub('>\s*<', '><',
                                                 response.body.replace('\n', ''),
                                                 0, re.M))
