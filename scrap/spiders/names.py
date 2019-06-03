@@ -56,10 +56,12 @@ class RecordsSpider(CSVFeedSpider):
         # And now...
         name = CCname()
 
-        # FUCK YOU, IDIOT SOCIOPATH DON GUERNCEY !!!
-        response = response.replace(body=response.body.replace('\n', ''))
-        response = response.replace(body=re.sub('>\s*<', '><', response.body, 0, re.M))
-        # FUCK YOU, IDIOT SOCIOPATH DON GUERNCEY !!!
+        # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
+        # response = response.replace(body=response.body.replace('\n', ''))
+        response = response.replace(body=re.sub('>\s*<', '><',
+                                                response.body.replace('\n', ''),
+                                                0, re.M))
+        # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
 
         NOT_FOUND = response.xpath(NO_nameS_FOUND_RESPONSE_XPATH).get()  # what is there
         if NOT_FOUND:                                                   # ?  (can't do without this, because of None)
