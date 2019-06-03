@@ -22,6 +22,9 @@ class ReitSpider(scrapy.Spider):
                 else:
                     self.log('There is something in place of No matching companies but it is not it')
         else:
+            company_list = response.xpath(CIK_XPATH)
+            for company in company_list:
 
-        next_page_url = self.base_url + r'{}&count=100'.format(str(100*page_num))
+
+            next_page_url = self.base_url + r'{}&count=100'.format(str(100*page_num))
             yield scrapy.Request(url=next_page_url, callback=parse)
