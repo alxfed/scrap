@@ -7,11 +7,19 @@
 
 import scrapy
 
+
+class SECcompany(scrapy.Item):
+    cik = scrapy.Field()
+    company = scrapy.Field()
+    state = scrapy.Field()
+
+
 class CCname(scrapy.Item):
     """Names in the CC recorder database
     """
     name = scrapy.Field()
     idx_name = scrapy.Field()
+
 
 class CCpin14(scrapy.Item):
     """pin14 item for pins spider
