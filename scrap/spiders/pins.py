@@ -24,7 +24,7 @@ class ScrapSpider(CSVFeedSpider):
         :param row: a single PIN read from the pin feed file
         :return: yields a scrapy.Request to pin page
         """
-        PIN_REQUEST_URL = 'https://www.ccrecorder.org/parcels/search/parcel/result/?line='
+        PIN_REQUEST_URL             = 'https://www.ccrecorder.org/parcels/search/parcel/result/?line='
         pin = row['pin']                                                # the name of the column defined in 'headers'
         yield scrapy.Request(url=PIN_REQUEST_URL + pin,
                              callback=self.parse_pin_page,
@@ -39,15 +39,14 @@ class ScrapSpider(CSVFeedSpider):
         :param response:
         :return: yields a record or a bunch of records
         """
-        PIN_LIST_LINE_XPATH     = '//table[@id="pins_table"]/*[@id="objs_body"]//tr'  #//*[@id="objs_table"]
-        PIN14_XPATH             = 'td[1]/text()'
-        STREET_ADDRESS_XPATH    = 'td[2]/text()'
-        CITY_XPATH              = 'td[3]/text()'
-        RECORD_NUMBER_XPATH     = 'td[4]/a/@href'
+        PIN_LIST_LINE_XPATH         = '//table[@id="pins_table"]/*[@id="objs_body"]//tr'  #//*[@id="objs_table"]
+        PIN14_XPATH                 = 'td[1]/text()'
+        STREET_ADDRESS_XPATH        = 'td[2]/text()'
+        CITY_XPATH                  = 'td[3]/text()'
+        RECORD_NUMBER_XPATH         = 'td[4]/a/@href'
         NO_PINS_FOUND_RESPONSE_XPATH = '//html/body/div[4]/div/div/div[2]/div/div/p[2]/text()' # where it can be
 
-        # And now...
-        pin14 = CCpin14()
+        pin14 = CCpin14()           # the item
 
         # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
         response = response.replace(body=re.sub('>\s*<', '><',

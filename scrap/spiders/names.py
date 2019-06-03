@@ -70,7 +70,6 @@ class RecordsSpider(CSVFeedSpider):
                     name = name + '0000'
                 name['name'] = name
                 name['name_status'] = 'not'
-                #self.log('Not found name '+response.url)                 # Debug notification
                 yield name                                             # and get out of here.
 
             else:
