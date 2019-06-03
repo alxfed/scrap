@@ -15,10 +15,10 @@ class ReitSpider(scrapy.Spider):
         EMPTY_PAGE_XPATH = '//div[@class="noCompanyMatch"]/text()'
         CIK_XPATH = '//*[@id="seriesDiv"]/*[@summary="Results"]/tbody//tr'
 
-        no_match = response.xpath(EMPTY_PAGE_XPATH).get()
-
-        self.log(no_match)
-
-        # process the page
-        next_page_url = self.base_url + r'{}&count=100'.format(str(100*page_num))
-        yield scrapy.Request(url=next_page_url, callback=parse)
+        NO_COMPANY_MATCH = response.xpath(EMPTY_PAGE_XPATH).get()
+        if NO_COMPANY_MATCH.startswith('No matching companies'):
+            yield None
+        else:
+            # process the page
+            next_page_url = self.base_url + r'{}&count=100'.format(str(100*page_num))
+            yield scrapy.Request(url=next_page_url, callback=parse)
