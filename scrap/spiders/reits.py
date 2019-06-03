@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+import re
 from scrapy.loader import ItemLoader
 from scrap.items import SECcompany
 
@@ -17,8 +18,12 @@ class ReitSpider(scrapy.Spider):
         EMPTY_PAGE_XPATH = '//div[@class="noCompanyMatch"]/text()'
         COMPANY_LIST_XPATH = '//div[@id="seriesDiv"]/table[@summary="Results"]//tr'
         CIK_XPATH = 'td[@scope="row"][1]/a/text()'
-        COMPANY_XPATH ='td[@scope="row"][2]/text()'
-        STATE_XPATH = 'td[@scope="row"][3]/a/text()'
+
+        # minify html
+        response = response.replace(body=re.sub('>\s*<', '><',
+                                                response.body.replace('\n', ''),
+                                                0, re.M))
+        # minify html
 
         NO_COMPANY_MATCH = response.xpath(EMPTY_PAGE_XPATH).get()
         if NO_COMPANY_MATCH:
@@ -31,10 +36,10 @@ class ReitSpider(scrapy.Spider):
             for company in company_list:
                 not_header = company.xpath(CIK_XPATH).get()
                 if not_header:
-                    filing = ItemLoader(item=SECcompany(), response=company)
-                    filing.add_xpath('cik', CIK_XPATH)
-                    filing.add_xpath('company', COMPANY_XPATH)
-                    filing.add_xpath('state', STATE_XPATH)
+                    filing = ItemLoader(SECcompany(), company)
+                    filing.add_xpath('cik',     CIK_XPATH)
+                    filing.add_xpath('company', 'td[@scope="row"][2]/text()')
+                    filing.add_xpath('state',   'td[@scope="row"][3]/a/text()')
                     yield filing.load_item()
 
             tail_url = r'{}&count=100'.format(str(100*self.page_num))
