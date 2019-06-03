@@ -12,7 +12,7 @@ class ScrapSpider(CSVFeedSpider):
     for these pins.
     The pins can be 10 or 14 digit long
     """
-    name = 'pins'
+    name = 'pins3'
     allowed_domains = ['ccrecorder.org']
     start_urls = ['https://alxfed.github.io/docs/pin_feed2.csv']
     headers = ['pin']
