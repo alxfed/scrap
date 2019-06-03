@@ -46,12 +46,12 @@ class RecordsSpider(CSVFeedSpider):
         :param response:
         :return: yields a record or a bunch of records
         """
-        name_LIST_LINE_XPATH = '//table[@id="names_table"]/body[@id="objs_body"]//tr'  #//*[@id="objs_table"]
+        NAMES_LIST_LINE_XPATH = '//table[@id="names_table"]/body[@id="objs_body"]//tr'  #//*[@id="objs_table"]
         name14_XPATH = '/td[1]/text()'
         STREET_ADDRESS_XPATH = '/td[2]/text()'
         CITY_XPATH = '/td[3]/text()'
         RECORD_NUMBER_XPATH = '/td[4]/a/@href'
-        NO_nameS_FOUND_RESPONSE_XPATH = '//html/body/div[4]/div/div/div[2]/div/div/p[2]/text()' # where it can be
+        NO_NAMES_FOUND_RESPONSE_XPATH = '//html/body/div[4]/div/div/div[2]/div/div/p[2]/text()' # where it can be
 
         # And now...
         name = CCname()
@@ -62,7 +62,7 @@ class RecordsSpider(CSVFeedSpider):
                                                 0, re.M))
         # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
 
-        NOT_FOUND = response.xpath(NO_nameS_FOUND_RESPONSE_XPATH).get()  # what is there
+        NOT_FOUND = response.xpath(NO_NAMES_FOUND_RESPONSE_XPATH).get()  # what is there
         if NOT_FOUND:                                                   # ?  (can't do without this, because of None)
             if NOT_FOUND.startswith('No names'):                         # No names?
                 name = response.meta['name']
@@ -79,7 +79,7 @@ class RecordsSpider(CSVFeedSpider):
 
         else:                                                           # there is a name like that
             # Tried to iterate over selectors but it didn's work, this is a less elegant way
-            lines_list = response.xpath(name_LIST_LINE_XPATH)
+            lines_list = response.xpath(NAMES_LIST_LINE_XPATH)
             # extract the number(s) for the record(s), jump to the docs page
             # (as many times as necessary, come back every time when done
             for index, line in enumerate(lines_list):  # not to forget that 14 digit name gives 2 tables of results.
