@@ -8,7 +8,7 @@ from scrap.items import SECcompany
 class ReitSpider(scrapy.Spider):
     name = '6553subdividers'
     allowed_domains = ['sec.gov']
-    start_urls = ['https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&SIC=6553&owner=include&match=&start=1&count=100']
+    start_urls = ['https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&SIC=6553&owner=include&match=&start=0&count=100']
     base_url = 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&SIC=6553&owner=include&match=&start='
     page_num = 1
 
