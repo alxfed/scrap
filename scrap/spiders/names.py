@@ -6,6 +6,15 @@ from scrapy.spiders import CSVFeedSpider
 from scrap.items import CCname
 
 
+def pre_processed_name(self, name):
+    """Take all extra elements from the string
+    and make it allcaps
+    """
+    name = name.replace("',.", '')
+    name = name.replace(' ', '+')
+    return name.upper()
+
+
 class RecordsSpider(CSVFeedSpider):
     """
     Reads the name feed csv file and parses the CC recorder
@@ -17,15 +26,6 @@ class RecordsSpider(CSVFeedSpider):
     start_urls = ['https://alxfed.github.io/docs/names_feed.csv']
     headers = ['name']
 
-    def pre_processing(self, name):
-        """Take all extra elements from the string
-        and make it allcaps
-        """
-        name = name.replace("',.", '')
-        name = name.upper()
-        name_string = name
-        return name_string
-
     def parse_row(self, response, row):
         """
         Reads a row in csv and makes a request to the name page
@@ -35,7 +35,7 @@ class RecordsSpider(CSVFeedSpider):
         """
         name_REQUEST_URL = 'https://www.ccrecorder.org/recordings/search/name/result/?ln='
         name = row['name']                                                # the name of the column defined in 'headers'
-        yield scrapy.Request(url=name_REQUEST_URL + name, callback=self.parse_name_page, meta={'name':name})
+        yield scrapy.Request(url=name_REQUEST_URL + pre_processed_name(name), callback=self.parse_name_page, meta={'name':name})
 
     def parse_name_page(self, response):
         """
@@ -60,7 +60,7 @@ class RecordsSpider(CSVFeedSpider):
         response = response.replace(body=re.sub('>\s*<', '><',
                                                 response.body.replace('\n', ''),
                                                 0, re.M))
-        # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
+        # The stupid fuck dumped this shit on the page to make in 'unscrapable'. :) Imbecile peasant from Indiana woods.
 
         NOT_FOUND = response.xpath(NO_NAMES_FOUND_RESPONSE_XPATH).get()  # what is there
         if NOT_FOUND:                                                   # ?  (can't do without this, because of None)
@@ -77,13 +77,8 @@ class RecordsSpider(CSVFeedSpider):
                 yield None
 
         else:                                                           # there is a name like that
-            # Tried to iterate over selectors but it didn's work, this is a less elegant way
             lines_list = response.xpath(NAMES_LIST_LINE_XPATH)
-            # extract the number(s) for the record(s), jump to the docs page
-            # (as many times as necessary, come back every time when done
-            for index, line in enumerate(lines_list):  # not to forget that 14 digit name gives 2 tables of results.
-                linear = str(index+1)
-                #self.log(line)
+            for line in lines_list:
                 line_xpath = '{}[{}]'.format(name_LIST_LINE_XPATH, linear)
                 name['name'] = response.xpath(line_xpath + name14_XPATH).get()
                 name['street_address'] = response.xpath(line_xpath + STREET_ADDRESS_XPATH).get()
