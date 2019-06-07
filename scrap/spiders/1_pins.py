@@ -33,9 +33,7 @@ class ScrapSpider(CSVFeedSpider):
     def parse_pin_page(self, response):
         """
         Parses the pin page, detects if there is none, detects if
-        there are multiple pins and their corresponding links on a page,
-        jumps to those pages and scrapes their contence into a
-        scrapy.item CCrecord
+        there are multiple pins and their corresponding links on a page.
         :param response:
         :return: yields a record or a bunch of records
         """
