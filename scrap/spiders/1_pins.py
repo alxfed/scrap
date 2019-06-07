@@ -7,12 +7,12 @@ from scrap.items import CCpin14
 
 
 class ScrapSpider(CSVFeedSpider):
-    """
+    """1 level crawling.
     Reads the pin feed csv file and parses the CC recorder
     for these pins.
     The pins can be 10 or 14 digit long
     """
-    name = '1_pins'
+    name = '1_pins'                     # 1 means 1-level.
     allowed_domains = ['ccrecorder.org']
     start_urls = ['https://alxfed.github.io/docs/pin_feed2.csv']        # the list of PINs to be verified.
     headers = ['pin']
