@@ -13,7 +13,7 @@ class SECcompany(scrapy.Item):
     company = scrapy.Field()
     state = scrapy.Field()
 
-class CCnameSearchResultS(scrapy.item):
+class CCnameSearchResultS(scrapy.Item):
     requested_name = scrapy.Field()
     name_status = scrapy.Field()
     results_list = scrapy.Field()
