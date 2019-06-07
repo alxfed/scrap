@@ -23,7 +23,7 @@ class NamesSearchSpider(CSVFeedSpider):
     """
     name = '1_names_search'
     allowed_domains = ['ccrecorder.org']
-    start_urls = ['https://alxfed.github.io/docs/names_feed3.csv']
+    start_urls = ['https://alxfed.github.io/docs/names_feed4.csv']
     headers = ['name']
     # where are we sending these parameters
     NAME_REQUEST_URL = 'https://www.ccrecorder.org/recordings/search/name/result/?ln='
@@ -53,15 +53,15 @@ class NamesSearchSpider(CSVFeedSpider):
         :param response:
         :return: yields a record or a bunch of records
         """
-        NAMES_LIST_LINE_XPATH = '//table[@id="names_table"]/body[@id="objs_body"]//tr'  #//*[@id="objs_table"]
+        NAMES_LIST_LINE_XPATH = '//table[@id="objs_table"]/tbody[@id="objs_body"]//tr'  #//*[@id="objs_table"]
         name14_XPATH = '/td[1]/text()'
         STREET_ADDRESS_XPATH = '/td[2]/text()'
         CITY_XPATH = '/td[3]/text()'
         RECORD_NUMBER_XPATH = '/td[4]/a/@href'
-        NO_NAMES_FOUND_RESPONSE_XPATH = '//html/body/div[4]/div/div/div[2]/div/div/p[2]/text()' # where it can be
+        NO_NAMES_FOUND_RESPONSE_XPATH = '//div[@class="card-body"]/p/text()' # where it can be
 
         # And now...
-        name = CCname()
+        search_result = CCname()
 
         # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
         response = response.replace(body=re.sub('>\s*<', '><',
@@ -71,16 +71,14 @@ class NamesSearchSpider(CSVFeedSpider):
 
         NOT_FOUND = response.xpath(NO_NAMES_FOUND_RESPONSE_XPATH).get()  # what is there
         if NOT_FOUND:                                                   # ?  (can't do without this, because of None)
-            if NOT_FOUND.startswith('No names'):                         # No names?
+            if NOT_FOUND.startswith('No Docs'):                         # No names?
                 name = response.meta['name']
-                if len(name) < 14:
-                    name = name + '0000'
                 name['name'] = name
                 name['name_status'] = 'not'
                 yield name                                             # and get out of here.
 
             else:
-                self.log('something is in the place of No names but it is not it')
+                self.log('something is in the place of No Docs but it is not it')
                 yield None
 
         else:                                                           # there is a name like that
