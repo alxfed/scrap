@@ -25,6 +25,8 @@ class RecordsSpider(CSVFeedSpider):
     allowed_domains = ['ccrecorder.org']
     start_urls = ['https://alxfed.github.io/docs/names_feed.csv']
     headers = ['name']
+    # where are we sending these parameters
+    name_REQUEST_URL = 'https://www.ccrecorder.org/recordings/search/name/result/?ln='
 
     def parse_row(self, response, row):
         """
@@ -33,17 +35,18 @@ class RecordsSpider(CSVFeedSpider):
         :param row: a single name read from the name feed file
         :return: yields a scrapy.Request to name page
         """
-        name_REQUEST_URL = 'https://www.ccrecorder.org/recordings/search/name/result/?ln='
+        # the name of the column defined in 'headers'
         name = row['name']
 
-        # transform for a URL
+        # transform it for a URL
         name_var = name.replace("',.", '')
         name_var = name_var.replace(' ', '+')
         name_var = name_var.upper()
 
-        # the name of the column defined in 'headers'
-        #url_suffix = pre_processed_name(name_var)
-        yield scrapy.Request(url=name_REQUEST_URL + name_var, callback=self.parse_name_page, meta={'name':name})
+        # make a request with a transformed name, but pass the original in meta
+        yield scrapy.Request(url=self.name_REQUEST_URL + name_var,
+                             callback=self.parse_name_page,
+                             meta={'name':name})
 
     def parse_name_page(self, response):
         """
