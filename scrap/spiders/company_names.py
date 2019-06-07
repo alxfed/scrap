@@ -24,7 +24,7 @@ class RecordsSpider(CSVFeedSpider):
     name = 'company_names'
     allowed_domains = ['ccrecorder.org']
     start_urls = ['https://alxfed.github.io/docs/names_feed.csv']
-    headers = ['name']
+    headers = ['co_name']
 
     def parse_row(self, response, row):
         """
@@ -34,7 +34,7 @@ class RecordsSpider(CSVFeedSpider):
         :return: yields a scrapy.Request to name page
         """
         name_REQUEST_URL = 'https://www.ccrecorder.org/recordings/search/name/result/?ln='
-        name_var = row['name']                                                # the name of the column defined in 'headers'
+        name_var = row['co_name']                                                # the name of the column defined in 'headers'
         url_suffix = pre_processed_name(name_var)
         yield scrapy.Request(url=name_REQUEST_URL + url_suffix, callback=self.parse_name_page, meta={'name':name})
 
