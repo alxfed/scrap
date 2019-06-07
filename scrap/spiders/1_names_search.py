@@ -23,7 +23,7 @@ class NamesSearchSpider(CSVFeedSpider):
     """
     name = '1_names_search'
     allowed_domains = ['ccrecorder.org']
-    start_urls = ['https://alxfed.github.io/docs/names_feed2.csv']
+    start_urls = ['https://alxfed.github.io/docs/names_feed3.csv']
     headers = ['name']
     # where are we sending these parameters
     name_REQUEST_URL = 'https://www.ccrecorder.org/recordings/search/name/result/?ln='
