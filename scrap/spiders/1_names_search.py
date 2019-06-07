@@ -82,7 +82,8 @@ class NamesSearchSpider(CSVFeedSpider):
 
         else:                                                           # there is a name like that
             lines_list = response.xpath(NAMES_LIST_LINE_XPATH)
-            for line in lines_list:
+            # a frame for the complete list of search results should be here.
+            for line in lines_list:             # every name_search_result one by one
                 line_xpath = '{}[{}]'.format(NAMES_LIST_LINE_XPATH, linear)
                 name_search_result['name'] = response.xpath(line_xpath + name14_XPATH).get()
                 name_search_result['street_address'] = response.xpath(line_xpath + STREET_ADDRESS_XPATH).get()

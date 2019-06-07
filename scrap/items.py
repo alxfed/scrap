@@ -21,7 +21,7 @@ class CCnameSearchResult(scrapy.Item):
     name = scrapy.Field()
     name_status = scrapy.Field()
     last_activity = scrapy.Field()
-    docs_list = scrapy.Field()
+    results_list = scrapy.Field()
 
 class CCname(scrapy.Item):
     """Names in the CC recorder database
