@@ -34,9 +34,14 @@ class RecordsSpider(CSVFeedSpider):
         :return: yields a scrapy.Request to name page
         """
         name_REQUEST_URL = 'https://www.ccrecorder.org/recordings/search/name/result/?ln='
-        name_var = row['name']                                                # the name of the column defined in 'headers'
-        url_suffix = pre_processed_name(name_var)
-        yield scrapy.Request(url=name_REQUEST_URL + url_suffix, callback=self.parse_name_page, meta={'name':name})
+        name = row['name']
+        name_var = name.replace("',.", '')
+        name_var = name_var.replace(' ', '+')
+        name_var = name_var.upper()
+
+        # the name of the column defined in 'headers'
+        #url_suffix = pre_processed_name(name_var)
+        yield scrapy.Request(url=name_REQUEST_URL + name_var, callback=self.parse_name_page, meta={'name':name})
 
     def parse_name_page(self, response):
         """
