@@ -15,7 +15,7 @@ def pre_processed_name(self, name):
     return name.upper()
 
 
-class RecordsSpider(CSVFeedSpider):
+class NamesSearchSpider(CSVFeedSpider):
     """
     Reads the name feed csv file and parses the CC recorder
     for these names.
