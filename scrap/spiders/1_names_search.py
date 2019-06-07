@@ -26,7 +26,7 @@ class NamesSearchSpider(CSVFeedSpider):
     start_urls = ['https://alxfed.github.io/docs/names_feed3.csv']
     headers = ['name']
     # where are we sending these parameters
-    name_REQUEST_URL = 'https://www.ccrecorder.org/recordings/search/name/result/?ln='
+    NAME_REQUEST_URL = 'https://www.ccrecorder.org/recordings/search/name/result/?ln='
 
     def parse_row(self, response, row):
         """
@@ -39,21 +39,17 @@ class NamesSearchSpider(CSVFeedSpider):
         name = row['name']
 
         # transform it for a URL
-        name_var = name.replace("',.", '')
-        name_var = name_var.replace(' ', '+')
-        name_var = name_var.upper()
+        name_var = pre_processed_name(self, name)
 
-        # make a request with a transformed name, but pass the original in meta
-        yield scrapy.Request(url=self.name_REQUEST_URL + name_var,
+        # make a request with a transformed name, but pass the original name in meta
+        yield scrapy.Request(url=self.NAME_REQUEST_URL + name_var,
                              callback=self.parse_name_page,
                              meta={'name':name})
 
     def parse_name_page(self, response):
         """
-        Parses the name page, detects if there is none, detects if
-        there are multiple names and their corresponding links on a page,
-        jumps to those pages and scrapes their contence into a
-        scrapy.item CCrecord
+        Parses the name search result page, detects if there are none, detects if
+        there are multiple names and their corresponding links on a page.
         :param response:
         :return: yields a record or a bunch of records
         """
@@ -90,7 +86,7 @@ class NamesSearchSpider(CSVFeedSpider):
         else:                                                           # there is a name like that
             lines_list = response.xpath(NAMES_LIST_LINE_XPATH)
             for line in lines_list:
-                line_xpath = '{}[{}]'.format(name_LIST_LINE_XPATH, linear)
+                line_xpath = '{}[{}]'.format(NAMES_LIST_LINE_XPATH, linear)
                 name['name'] = response.xpath(line_xpath + name14_XPATH).get()
                 name['street_address'] = response.xpath(line_xpath + STREET_ADDRESS_XPATH).get()
                 name['city'] = response.xpath(line_xpath + CITY_XPATH).get().strip()             # strip removes trailing spaces
