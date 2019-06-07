@@ -16,7 +16,7 @@ class SECcompany(scrapy.Item):
 class CCnameSearchResultS(scrapy.Item):
     requested_name = scrapy.Field()
     name_status = scrapy.Field()
-    results_list = scrapy.Field()
+    results = scrapy.Field()
 
 class CCnameSearchResult(scrapy.Item):
     """A list of found results for a

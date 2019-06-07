@@ -77,14 +77,17 @@ class NamesSearchSpider(CSVFeedSpider):
 
         else:                                                           # there is a name like that
             search_results['name_status'] = 'valid'
+            result ={}
             lines_list = response.xpath(NAMES_LIST_LINE_XPATH)
             # a frame for the complete list of search results should be here. It and then the iteration.
             for index, line in enumerate(lines_list):             # every name_search_result one by one
-                name_search_result = ItemLoader(CCnameSearchResult(), line)
-                name_search_result.add_xpath('name', '/td[1]/text()')
-                name_search_result.add_xpath('trust_number', '/td[2]/text()')
-                name_search_result.add_xpath('last_update', '/td[3]/text()')
-                name_search_result.add_xpath('idx_name', '/td[3]/a/@href', re='[.0-9]+')
-                search_results['results_list'].update({str(index+1): name_search_result.load_item()})
+                name_search_result = CCnameSearchResult()
+                name_search_result['name'] = line.xpath('td[1]/text()').get()
+                name_search_result['trust_number'] = line.xpath('td[2]/text()').get()
+                name_search_result['last_update'] = line.xpath('td[3]/text()').get()
+                name_search_result['idx_name'] = line.xpath('td[4]/a/@href').re('[.0-9]+')[0]
+                result.update({str(index+1): name_search_result})
+                # print('ok')
             else:                   # finished reading the list of search results time to return it
+                search_results['results'] = result
                 yield search_results
