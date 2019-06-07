@@ -5,7 +5,7 @@ from scrapy.spiders import CrawlSpider, Rule
 
 
 class ReitcSpider(CrawlSpider):
-    name = 'reitc'
+    name = 'reit_crawler'
     allowed_domains = ['sec.gov']
     start_urls = ['http://sec.gov/']
 

@@ -6,7 +6,7 @@ from scrap.items import SECcompany
 
 
 class ReitSpider(scrapy.Spider):
-    name = 'reits'
+    name = '1_reits_6798'
     allowed_domains = ['sec.gov']
     start_urls = ['https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&SIC=6798&owner=include&match=&start=0&count=100']
     base_url = 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&SIC=6798&owner=include&match=&start='
