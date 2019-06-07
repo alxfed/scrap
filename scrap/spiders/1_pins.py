@@ -78,3 +78,6 @@ class ScrapSpider(CSVFeedSpider):
                 pin14['record_number']  = line.xpath(RECORD_NUMBER_XPATH).re('[.0-9]+')[0]
                 pin14['pin_status']     = 'valid'
                 yield pin14
+
+
+# finished on June 7-th, 2019.
