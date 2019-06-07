@@ -3,7 +3,7 @@ import scrapy
 import re
 from scrapy.selector import Selector
 from scrapy.spiders import CSVFeedSpider
-from scrap.items import CCname
+from scrap.items import CCnameSearchResult
 
 
 def pre_processed_name(self, name):
@@ -61,7 +61,7 @@ class NamesSearchSpider(CSVFeedSpider):
         NO_NAMES_FOUND_RESPONSE_XPATH = '//div[@class="card-body"]/p/text()' # where it can be
 
         # And now...
-        search_result = CCname()
+        name_search_result = CCnameSearchResult()
 
         # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
         response = response.replace(body=re.sub('>\s*<', '><',
@@ -72,10 +72,9 @@ class NamesSearchSpider(CSVFeedSpider):
         NOT_FOUND = response.xpath(NO_NAMES_FOUND_RESPONSE_XPATH).get()  # what is there
         if NOT_FOUND:                                                   # ?  (can't do without this, because of None)
             if NOT_FOUND.startswith('No Docs'):                         # No names?
-                name = response.meta['name']
-                name['name'] = name
-                name['name_status'] = 'not'
-                yield name                                             # and get out of here.
+                name_search_result['name'] = response.meta['name']
+                name_search_result['name_status'] = 'not'
+                yield name_search_result                                             # and get out of here.
 
             else:
                 self.log('something is in the place of No Docs but it is not it')
@@ -85,10 +84,10 @@ class NamesSearchSpider(CSVFeedSpider):
             lines_list = response.xpath(NAMES_LIST_LINE_XPATH)
             for line in lines_list:
                 line_xpath = '{}[{}]'.format(NAMES_LIST_LINE_XPATH, linear)
-                name['name'] = response.xpath(line_xpath + name14_XPATH).get()
-                name['street_address'] = response.xpath(line_xpath + STREET_ADDRESS_XPATH).get()
-                name['city'] = response.xpath(line_xpath + CITY_XPATH).get().strip()             # strip removes trailing spaces
-                name['record_number'] = response.xpath(line_xpath + RECORD_NUMBER_XPATH).re('[.0-9]+')[0]
-                name['name_status'] = 'valid'
+                name_search_result['name'] = response.xpath(line_xpath + name14_XPATH).get()
+                name_search_result['street_address'] = response.xpath(line_xpath + STREET_ADDRESS_XPATH).get()
+                name_search_result['city'] = response.xpath(line_xpath + CITY_XPATH).get().strip()             # strip removes trailing spaces
+                name_search_result['record_number'] = response.xpath(line_xpath + RECORD_NUMBER_XPATH).re('[.0-9]+')[0]
+                name_search_result['name_status'] = 'valid'
                 #self.log(response.meta['name'])
-                yield name
+                yield name_search_result

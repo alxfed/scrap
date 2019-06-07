@@ -14,6 +14,15 @@ class SECcompany(scrapy.Item):
     state = scrapy.Field()
 
 
+class CCnameSearchResult(scrapy.Item):
+    """A list of found results for a
+    given name
+    """
+    name = scrapy.Field()
+    name_status = scrapy.Field()
+    last_activity = scrapy.Field()
+    docs_list = scrapy.Field()
+
 class CCname(scrapy.Item):
     """Names in the CC recorder database
     """
