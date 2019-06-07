@@ -21,7 +21,7 @@ class RecordsSpider(CSVFeedSpider):
     for these names.
     The names can be 10 or 14 digit long
     """
-    name = 'company_names'
+    name = '1_names_search'
     allowed_domains = ['ccrecorder.org']
     start_urls = ['https://alxfed.github.io/docs/names_feed.csv']
     headers = ['name']
@@ -35,6 +35,8 @@ class RecordsSpider(CSVFeedSpider):
         """
         name_REQUEST_URL = 'https://www.ccrecorder.org/recordings/search/name/result/?ln='
         name = row['name']
+
+        # transform for a URL
         name_var = name.replace("',.", '')
         name_var = name_var.replace(' ', '+')
         name_var = name_var.upper()
