@@ -78,7 +78,7 @@ class NamesSearchSpider(CSVFeedSpider):
 
         else:                                                           # there is a name like that
             search_results['name_status'] = 'valid'
-            result =OrderedDict()
+            result =    OrderedDict()
             lines_list = response.xpath(NAMES_LIST_LINE_XPATH)
             # a frame for the complete list of search results should be here. It and then the iteration.
             for index, line in enumerate(lines_list):             # every name_search_result one by one
