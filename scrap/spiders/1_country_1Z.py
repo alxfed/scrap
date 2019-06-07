@@ -8,12 +8,12 @@ from scrap.items import SECcompany
 class ReitSpider(scrapy.Spider):
     name = '1_country_1Z'
     allowed_domains = ['sec.gov']
-    start_urls = ['https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&State=1Z&owner=include&match=&start=1&count=100&hidefilings=0']
+    start_urls = ['https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&State=1Z&owner=include&match=&start=0&count=100&hidefilings=0']
     base_url = 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&State=1Z&owner=include&match=&start='
     page_num = 1
 
     def parse(self, response):
-        """Multipage parse with 100 items per page (starting from #1) and incrementable URL
+        """Multipage parse with 100 items per page (starting from #0) and incrementable URL
         """
         EMPTY_PAGE_XPATH = '//div[@class="noCompanyMatch"]/text()'
         COMPANY_LIST_XPATH = '//div[@id="seriesDiv"]/table[@summary="Results"]//tr'
