@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import re
-from scrapy.loader import ItemLoader
 from collections import OrderedDict
 from scrapy.spiders import CSVFeedSpider
 from scrap.items import CCnameSearchResultS, CCnameSearchResult
@@ -11,7 +10,7 @@ def pre_processed_name(self, name):
     """Take all extra elements from the string
     and make it allcaps
     """
-    name = name.replace("',.", '')
+    name = name.replace(".',", '')
     name = name.replace(' ', '+')
     return name.upper()
 
@@ -24,7 +23,7 @@ class NamesSearchSpider(CSVFeedSpider):
     """
     name = '1_names_search'
     allowed_domains = ['ccrecorder.org']
-    start_urls = ['https://alxfed.github.io/docs/names_feed.csv']
+    start_urls = ['https://alxfed.github.io/docs/names_feed2.csv']
     headers = ['name']
     # where are we sending these parameters
     NAME_REQUEST_URL = 'https://www.ccrecorder.org/recordings/search/name/result/?ln='
