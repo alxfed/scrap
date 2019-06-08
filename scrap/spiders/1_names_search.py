@@ -85,7 +85,7 @@ class NamesSearchSpider(CSVFeedSpider):
                 name_search_result['name'] = line.xpath('td[1]/text()').get()
                 name_search_result['trust_number'] = line.xpath('td[2]/text()').get()
                 name_search_result['last_update'] = line.xpath('td[3]/text()').get()
-                name_search_result['idx_name'] = line.xpath('td[4]/a/@href').re('[.0-9]+')[0]
+                name_search_result['idx_name'] = line.xpath('td[4]/a/@href').re('[-.0-9]+')[0]  # Fuck you, Don Guernsey!
                 result.update({str(index+1): name_search_result})
                 # print('ok')
             else:                   # finished reading the list of search results time to return it
