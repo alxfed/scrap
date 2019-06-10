@@ -73,13 +73,15 @@ class ScrapSpider(CSVFeedSpider):
             # extract the number(s) for the record(s), jump to the docs page
             # (as many times as necessary, come back every time when done
             for line in lines_list:
+                pin14 = CCrecord()
                 pin14['pin']            = line.xpath(PIN14_XPATH).get()
                 pin14['street_address'] = line.xpath(STREET_ADDRESS_XPATH).get()
                 pin14['city']           = line.xpath(CITY_XPATH).get().strip()
                 record_number  = line.xpath(RECORD_NUMBER_XPATH).re('[.0-9]+')[0]
                 pin14['record_number'] = record_number
+                URL = self.DOCS_LIST_URL+record_number+'/'
                 pin14['pin_status']     = 'valid'
-                yield scrapy.Request(url=self.DOCS_LIST_URL+record_number+'/',
+                yield scrapy.Request(url=URL,
                                      callback=self.parse_docs_page,
                                      meta={'pin14': pin14})
 
@@ -90,9 +92,16 @@ class ScrapSpider(CSVFeedSpider):
         :param response:
         :return:
         """
-        DOCS_LIST_LINE_XPATH = '//table[@id="docs_table"]/*[@id="docs_body"]//tr'
+        DOCS_LIST_LINE_XPATH = '//table[@id="docs_table"]/tbody[@id="docs_body"]//tr'
 
-        record = CCrecord()                     # instantiate a new record
+        # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
+        response = response.replace(body=re.sub('>\s*<', '><',
+                                                response.body.replace('\n', ''),
+                                                0, re.M))
+        # The stupid fuck dumped this shit on the page to make in 'unscrapable'. :) Imbecile peasant from Indiana woods.
+
+        record = CCrecord() # instantiate a new record
+        me_me_meta = response.meta['pin14']
         record['pin'] = response.meta['pin14']['pin']
         record['pin_status'] = 'valid'
         record['street_address'] = response.meta['pin14']['street_address']
@@ -107,36 +116,36 @@ class ScrapSpider(CSVFeedSpider):
             doc_list_line = CCrecordLine()
             doc_list_line['date'] = line.xpath('td[1]/text()').get()
             doc_list_line['doc_type'] = line.xpath('td[2]/text()').get()
-            doc_list_line['doc_num'] = line.xpath('td[3]/text()').get()
-            doc_list_line['doc_url_num'] = line.xpath('td[3]/a/@href').re('[-.0-9]+')[0]  #TODO the number is not the only/last in the string
+            doc_list_line['doc_num'] = line.xpath('td[3]/a/text()').get()
+            # doc_list_line['doc_url_num'] = line.xpath('td[3]/a/@href').re('[-.0-9]+')[0]  #TODO the number is not the only/last in the string
             doc_list_line['consideration'] = line.xpath('td[4]/text()').get()
             # cycle inside the docs1_table
-            docs1_table_lines = line.xpath('//*[@id="docs1_body"]//tr')
+            docs1_table_lines = line.xpath('td/table[@id="docs1_table"]/tbody[@id="docs1_body"]//tr')
             docs1_table = OrderedDict()
-            for table_line in docs1_table_lines:
+            for indu, table_line in enumerate(docs1_table_lines):
                 record_line = CCrecordLineName()
-                record_line['name'] = table_line.xpath('td[1]/a/text()')
-                record_line['type'] = table_line.xpath('td[2]/text()')
-                docs1_table.update(record_line)
+                record_line['name'] = table_line.xpath('td[1]/a/text()').get()
+                record_line['type'] = table_line.xpath('td[2]/text()').get()
+                docs1_table.update({str(indu+1):record_line})
             else:
                 doc_list_line['names'] = docs1_table
             # cycle inside the docs2_table
-            docs2_table_lines = line.xpath('//*[@id="docs2_body"]//tr')
+            docs2_table_lines = line.xpath('td/table[@id="docs2_table"]/tbody[@id="docs2_body"]//tr')
             docs2_table = OrderedDict()
             for table_line in docs2_table_lines:
                 record_line = CCrecordLineParcel()
-                record_line['pin'] = table_line.xpath('td[1]/a/text()')
-                record_line['address'] = table_line.xpath('td[2]/a/text()')
+                record_line['pin'] = table_line.xpath('td[1]/a/text()').get()
+                record_line['address'] = table_line.xpath('td[2]/a/text()').get()
                 docs2_table.update(record_line)
             else:
                 doc_list_line['parcels'] = docs2_table
             # cycle inside the docs3_table
-            docs3_table_lines = line.xpath('//*[@id="docs3_body"]//tr')
+            docs3_table_lines = line.xpath('td/table[@id="docs3_table"]/tbody[@id="docs3_body"]//tr')
             docs3_table = OrderedDict()
             for table_line in docs1_table_lines:
                 record_line = CCrecordLineRelatedDoc()
-                record_line['doc_number'] = table_line.xpath('td[1]/a/text()')
-                record_line['url'] = table_line.xpath('td[1]/a/text()')
+                record_line['doc_number'] = table_line.xpath('td[1]/a/text()').get()
+                record_line['url'] = table_line.xpath('td[1]/a/text()').get()
                 docs3_table.update(record_line)
             else:
                 doc_list_line['names'] = docs3_table
