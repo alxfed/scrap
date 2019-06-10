@@ -132,23 +132,23 @@ class ScrapSpider(CSVFeedSpider):
             # cycle inside the docs2_table
             docs2_table_lines = line.xpath('td/table[@id="docs2_table"]/tbody[@id="docs2_body"]//tr')
             docs2_table = OrderedDict()
-            for table_line in docs2_table_lines:
+            for indu, table_line in enumerate(docs2_table_lines):
                 record_line = CCrecordLineParcel()
                 record_line['pin'] = table_line.xpath('td[1]/a/text()').get()
                 record_line['address'] = table_line.xpath('td[2]/a/text()').get()
-                docs2_table.update(record_line)
+                docs2_table.update({str(indu+1):record_line})
             else:
                 doc_list_line['parcels'] = docs2_table
             # cycle inside the docs3_table
             docs3_table_lines = line.xpath('td/table[@id="docs3_table"]/tbody[@id="docs3_body"]//tr')
             docs3_table = OrderedDict()
-            for table_line in docs1_table_lines:
+            for indu, table_line in enumerate(docs3_table_lines):
                 record_line = CCrecordLineRelatedDoc()
                 record_line['doc_number'] = table_line.xpath('td[1]/a/text()').get()
                 record_line['url'] = table_line.xpath('td[1]/a/text()').get()
-                docs3_table.update(record_line)
+                docs3_table.update({str(indu+1):record_line})
             else:
-                doc_list_line['names'] = docs3_table
+                doc_list_line['related_docs'] = docs3_table
             # buttons are useless, they have the same doc_url_num in them.
             pin_docs_list.update({str(index + 1): doc_list_line})
             print('ok')
