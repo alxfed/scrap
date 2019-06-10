@@ -113,7 +113,7 @@ class ScrapSpider(CSVFeedSpider):
             # cycle inside the docs1_table
             # cycle inside the docs2_table
             # cycle inside the docs3_table
-            # what to do with these buttons?
+            # buttons are useless, they have the same doc_url_num in them.
             pin_docs_list.update({str(index + 1): doc_list_line})
             print('ok')
         else:  # finished reading the list of search results time to return it
