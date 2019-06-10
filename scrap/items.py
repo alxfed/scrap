@@ -85,6 +85,7 @@ class CCrecord(scrapy.Item):
     The complete record/list of events associated with a PIN
     """
     pin = scrapy.Field()
+    pin_status = scrapy.Field()
     street_address = scrapy.Field()
     city = scrapy.Field()
     record_number = scrapy.Field()
