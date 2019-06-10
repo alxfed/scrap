@@ -3,7 +3,7 @@ import scrapy
 import re
 from collections import OrderedDict
 from scrapy.spiders import CSVFeedSpider
-from scrap.items import CCpin14, CCrecord, CCrecordLine
+from scrap.items import CCpin14, CCrecord, CCrecordLine, CCrecordLineName, CCrecordLineParcel, CCrecordLineRelatedDoc
 
 
 class ScrapSpider(CSVFeedSpider):
@@ -108,19 +108,41 @@ class ScrapSpider(CSVFeedSpider):
             doc_list_line['date'] = line.xpath('td[1]/text()').get()
             doc_list_line['doc_type'] = line.xpath('td[2]/text()').get()
             doc_list_line['doc_num'] = line.xpath('td[3]/text()').get()
-            doc_list_line['doc_url_num'] = line.xpath('td[3]/a/@href').re('[-.0-9]+')[0]
+            doc_list_line['doc_url_num'] = line.xpath('td[3]/a/@href').re('[-.0-9]+')[0]  #TODO the number is not the only/last in the string
             doc_list_line['consideration'] = line.xpath('td[4]/text()').get()
             # cycle inside the docs1_table
+            docs1_table_lines = line.xpath('//*[@id="docs1_body"]//tr')
+            docs1_table = OrderedDict()
+            for table_line in docs1_table_lines:
+                record_line = CCrecordLineName()
+                record_line['name'] = table_line.xpath('td[1]/a/text()')
+                record_line['type'] = table_line.xpath('td[2]/text()')
+                docs1_table.update(record_line)
+            else:
+                doc_list_line['names'] = docs1_table
             # cycle inside the docs2_table
+            docs2_table_lines = line.xpath('//*[@id="docs2_body"]//tr')
+            docs2_table = OrderedDict()
+            for table_line in docs2_table_lines:
+                record_line = CCrecordLineParcel()
+                record_line['pin'] = table_line.xpath('td[1]/a/text()')
+                record_line['address'] = table_line.xpath('td[2]/a/text()')
+                docs2_table.update(record_line)
+            else:
+                doc_list_line['parcels'] = docs2_table
             # cycle inside the docs3_table
+            docs3_table_lines = line.xpath('//*[@id="docs3_body"]//tr')
+            docs3_table = OrderedDict()
+            for table_line in docs1_table_lines:
+                record_line = CCrecordLineRelatedDoc()
+                record_line['doc_number'] = table_line.xpath('td[1]/a/text()')
+                record_line['url'] = table_line.xpath('td[1]/a/text()')
+                docs3_table.update(record_line)
+            else:
+                doc_list_line['names'] = docs3_table
             # buttons are useless, they have the same doc_url_num in them.
             pin_docs_list.update({str(index + 1): doc_list_line})
             print('ok')
-        else:  # finished reading the list of search results time to return it
+        else:  # finished reading the list of documents time to return it
             record['docs'] = pin_docs_list
             yield record
-
-
-
-
-# finished on June 7-th, 2019.
