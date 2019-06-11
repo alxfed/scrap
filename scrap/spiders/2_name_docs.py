@@ -111,14 +111,14 @@ class NamesSearchSpider(CSVFeedSpider):
         docs_list = response.xpath(DOCS_NAME_LIST_XPATH)
         for indu, doc in enumerate(docs_list):
             name_doc = CCnameDoc()
-            name_doc['gte'] = doc.xpath('').get()
-            name_doc['gtr'] = doc.xpath('').get()
-            name_doc['doc_type'] = doc.xpath('').get()
-            name_doc['doc_num'] = doc.xpath('').get()
-            name_doc['date'] = doc.xpath('').get()
-            name_doc['trust_number'] = doc.xpath('').get()
-            name_doc['pin14'] = doc.xpath('').get()
-            name_doc['show_url'] = doc.xpath('').get()
+            name_doc['gte'] = doc.xpath('td[1]/text()').get()
+            name_doc['gtr'] = doc.xpath('td[2]/text()').get()
+            name_doc['doc_type'] = doc.xpath('td[3]/text()').get()
+            name_doc['doc_num'] = doc.xpath('td[4]/text()').get()
+            name_doc['date'] = doc.xpath('td[5]/text()').get()
+            name_doc['trust_number'] = doc.xpath('td[6]/text()').get()
+            name_doc['pin14'] = doc.xpath('td[7]/text()').get()
+            name_doc['show_url'] = doc.xpath('td[8]/a/@href').re('[-.0-9]+')[0]
             docs.update({str(indu+1): name_doc})
         else:
             name_search_result['docs'] = docs
