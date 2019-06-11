@@ -63,26 +63,27 @@ class NamesSearchSpider(CSVFeedSpider):
                                                 0, re.M))
         # The stupid fuck dumped this shit on the page to make in 'unscrapable'. :) Imbecile peasant from Indiana woods.
 
-        search_results = CCnameSearchResultS()
-        search_results['requested_name'] = response.meta['name']
+        name_search_result = CCnameSearchResult()
+        name_search_result['requested_name'] = response.meta['name']
 
         NOT_FOUND = response.xpath(NO_NAMES_FOUND_RESPONSE_XPATH).get()  # what is there
         if NOT_FOUND:                                                   # ?  (can't do without this, because of None)
             if NOT_FOUND.startswith('No Docs'):                         # No names?
-                search_results['name_status'] = 'not'
-                yield search_results                                             # and get out of here.
+                name_search_result['name_status'] = 'not'
+                yield name_search_result                                             # and get out of here.
 
             else:
                 self.log('something is in the place of No Docs but it is not it')
                 yield None
 
         else:                                                           # there is a name like that
-            search_results['name_status'] = 'valid'
-            result =    OrderedDict()
+
             lines_list = response.xpath(NAMES_LIST_LINE_XPATH)
             # a frame for the complete list of search results should be here. It and then the iteration.
             for index, line in enumerate(lines_list):             # every name_search_result one by one
                 name_search_result = CCnameSearchResult()
+                name_search_result['requested_name'] = response.meta['name']
+                name_search_result['name_status'] = 'valid'
                 name_search_result['name'] = line.xpath('td[1]/text()').get()
                 name_search_result['trust_number'] = line.xpath('td[2]/text()').get()
                 name_search_result['last_update'] = line.xpath('td[3]/text()').get()
@@ -90,13 +91,35 @@ class NamesSearchSpider(CSVFeedSpider):
                 name_search_result['idx_name'] = idx_name
                 # go to the page of docs associated with the name and read it, then come back
                 yield scrapy.Request(url=self.NAME_DOCS_PAGE_URL+idx_name+'/',
-                                     callback=self.parse_name_docs_page())
-                result.update({str(index+1): name_search_result})
-                # print('ok')
-            else:                   # finished reading the list of search results time to return it
-                search_results['results'] = result
-                yield search_results
+                                     callback=self.parse_name_docs_page(),
+                                     meta={'name_search_result': name_search_result})
+
 
     def parse_name_docs_page(self, response):
-        back = None
-        yield back
+        """
+        Assembles the result from the line of the initial name search result
+        and the items from the page it is pointing to.
+        :param response:
+        :return:
+        """
+        DOCS_NAME_LIST_XPATH = '//table[@id="docs_table"]/tbody[@id="doc_names_body"]/tr'
+
+        name_search_result = CCnameSearchResult()
+        name_search_result = response.meta['name_search_result']
+        docs = OrderedDict()
+
+        docs_list = response.xpath(DOCS_NAME_LIST_XPATH)
+        for indu, doc in enumerate(docs_list):
+            name_doc = CCnameDoc()
+            name_doc['gte'] = doc.xpath('').get()
+            name_doc['gtr'] = doc.xpath('').get()
+            name_doc['doc_type'] = doc.xpath('').get()
+            name_doc['doc_num'] = doc.xpath('').get()
+            name_doc['date'] = doc.xpath('').get()
+            name_doc['trust_number'] = doc.xpath('').get()
+            name_doc['pin14'] = doc.xpath('').get()
+            name_doc['show_url'] = doc.xpath('').get()
+            docs.update({str(indu+1): name_doc})
+        else:
+            name_search_result['docs'] = docs
+            yield name_search_result
