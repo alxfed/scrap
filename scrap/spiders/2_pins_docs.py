@@ -124,8 +124,11 @@ class ScrapSpider(CSVFeedSpider):
             doc_list_line['date'] = line.xpath('td[1]/text()').get()
             doc_list_line['doc_type'] = line.xpath('td[2]/text()').get()
             doc_list_line['doc_num'] = line.xpath('td[3]/a/text()').get()
+            url_string = line.xpath('td[3]/a/@href').get()                      # extract a URL string
+            doc_list_line['doc_url_num'] = re.split(r'/', url_string)[3]
             # doc_list_line['doc_url_num'] = line.xpath('td[3]/a/@href').re('[-.0-9]+')[0]  #TODO the number is not the only/last in the string
-            doc_list_line['consideration'] = line.xpath('td[4]/text()').get()
+            consideration = line.xpath('td[4]/text()').get()
+            doc_list_line['consideration'] = re.sub(',', '', consideration)     # remove the comma
             # cycle inside the docs1_table
             docs1_table_lines = line.xpath('td/table[@id="docs1_table"]/tbody[@id="docs1_body"]//tr')
             docs1_table = OrderedDict()
