@@ -111,14 +111,7 @@ class ScrapSpider(CSVFeedSpider):
         pin_docs_list = OrderedDict()
 
         lines_list = response.xpath(DOCS_LIST_LINE_XPATH)
-        # a frame for the complete list of search results should be here. It and then the iteration.
-        '''
-        lines_list_debug = response.xpath(DOCS_LIST_LINE_XPATH).getall()
-        line1 = lines_list_debug[0]
-        line2 = lines_list_debug[1]
-        line3 = lines_list_debug[2]
-        line4 = lines_list_debug[3]
-        '''
+
         for index, line in enumerate(lines_list):  # every doc_list_line one by one
             doc_list_line = CCrecordLine()
             doc_list_line['date'] = line.xpath('td[1]/text()').get()
@@ -126,9 +119,9 @@ class ScrapSpider(CSVFeedSpider):
             doc_list_line['doc_num'] = line.xpath('td[3]/a/text()').get()
             url_string = line.xpath('td[3]/a/@href').get()                      # extract a URL string
             doc_list_line['doc_url_num'] = re.split(r'/', url_string)[3]
-            # doc_list_line['doc_url_num'] = line.xpath('td[3]/a/@href').re('[-.0-9]+')[0]  #TODO the number is not the only/last in the string
             consideration = line.xpath('td[4]/text()').get()
-            doc_list_line['consideration'] = re.sub(',', '', consideration)     # remove the comma
+            doc_list_line['consideration'] = re.sub(',', '', consideration)     # remove the comma (if any)
+
             # cycle inside the docs1_table
             docs1_table_lines = line.xpath('td/table[@id="docs1_table"]/tbody[@id="docs1_body"]//tr')
             docs1_table = OrderedDict()
@@ -163,7 +156,9 @@ class ScrapSpider(CSVFeedSpider):
                 doc_list_line['related_docs'] = docs3_table
 
             # buttons are useless, they have the same doc_url_num in them.
-            pin_docs_list.update({str(index + 1): doc_list_line})
+            pin_docs_list.update({str(index + 1): doc_list_line})                      #final load with index as a key
         else:  # finished reading the list of documents time to return it
             record['docs'] = pin_docs_list
             yield record
+
+#finished on June 11, 2019
