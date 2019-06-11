@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-# Define here the models for your scraped items
-#
-# See documentation in:
-# https://doc.scrapy.org/en/latest/topics/items.html
+# The models for scraped items
+
 
 import scrapy
 
@@ -26,6 +24,7 @@ class CCnameSearchResult(scrapy.Item):
     trust_number = scrapy.Field()
     last_update = scrapy.Field()
     idx_name = scrapy.Field()
+    docs = scrapy.Field()
 
 class CCname(scrapy.Item):
     """Names in the CC recorder database
@@ -77,7 +76,7 @@ class CCrecordLine(scrapy.Item):
     names = scrapy.Field()
     parcels = scrapy.Field()
     related_docs = scrapy.Field()
-    show_doc = scrapy.Field()
+    show_url = scrapy.Field()
 
 
 class CCrecord(scrapy.Item):
@@ -91,3 +90,16 @@ class CCrecord(scrapy.Item):
     record_number = scrapy.Field()
     docs = scrapy.Field()
 
+
+class CCnameDoc(scrapy.Item):
+    """
+    A document associated with the found name
+    """
+    gte = scrapy.Field()
+    gtr = scrapy.Field()
+    doc_type = scrapy.Field()
+    doc_num = scrapy.Field()
+    date = scrapy.Field()
+    trust_number = scrapy.Field()
+    pin14 = scrapy.Field()
+    show_url = scrapy.Field()

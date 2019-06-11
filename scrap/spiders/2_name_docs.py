@@ -3,7 +3,7 @@ import scrapy
 import re
 from collections import OrderedDict
 from scrapy.spiders import CSVFeedSpider
-from scrap.items import CCnameSearchResultS, CCnameSearchResult
+from scrap.items import CCnameSearchResultS, CCnameSearchResult, CCnameDoc
 
 
 def pre_processed_name(self, name):
@@ -21,12 +21,13 @@ class NamesSearchSpider(CSVFeedSpider):
     for these names.
     The names can be 10 or 14 digit long
     """
-    name = '1_names_search'
+    name = '2_name_docs'
     allowed_domains = ['ccrecorder.org']
     start_urls = ['https://alxfed.github.io/docs/names_feed1.csv']
     headers = ['name']
     # where are we sending these parameters
     NAME_REQUEST_URL = 'https://www.ccrecorder.org/recordings/search/name/result/?ln='
+    NAME_DOCS_PAGE_URL = 'https://www.ccrecorder.org/recordings/show/idx_name/'
 
     def parse_row(self, response, row):
         """
@@ -85,9 +86,17 @@ class NamesSearchSpider(CSVFeedSpider):
                 name_search_result['name'] = line.xpath('td[1]/text()').get()
                 name_search_result['trust_number'] = line.xpath('td[2]/text()').get()
                 name_search_result['last_update'] = line.xpath('td[3]/text()').get()
-                name_search_result['idx_name'] = line.xpath('td[4]/a/@href').re('[-.0-9]+')[0]  # Fuck you, Don Guernsey!
+                idx_name = line.xpath('td[4]/a/@href').re('[-.0-9]+')[0]  # Fuck you, Don Guernsey!
+                name_search_result['idx_name'] = idx_name
+                # go to the page of docs associated with the name and read it, then come back
+                yield scrapy.Request(url=self.NAME_DOCS_PAGE_URL+idx_name+'/',
+                                     callback=self.parse_name_docs_page())
                 result.update({str(index+1): name_search_result})
                 # print('ok')
             else:                   # finished reading the list of search results time to return it
                 search_results['results'] = result
                 yield search_results
+
+    def parse_name_docs_page(self, response):
+        back = None
+        yield back
