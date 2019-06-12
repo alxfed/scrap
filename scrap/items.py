@@ -22,7 +22,7 @@ class CCnameSearchResult(scrapy.Item):
     """
     name = scrapy.Field()
     requested_name = scrapy.Field()
-    name_status = scrapy.Field()
+    requested_name_status = scrapy.Field()
     trust_number = scrapy.Field()
     last_update = scrapy.Field()
     idx_name = scrapy.Field()

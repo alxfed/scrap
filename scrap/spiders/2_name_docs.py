@@ -82,7 +82,7 @@ class NamesSearchSpider(CSVFeedSpider):
             for index, line in enumerate(lines_list):             # every name_search_result one by one
                 name_search_result = CCnameSearchResult()
                 name_search_result['requested_name'] = response.meta['name']
-                name_search_result['name_status'] = 'valid'
+                name_search_result['requested_name_status'] = 'valid'
                 name_search_result['name'] = line.xpath('td[1]/text()').get()
                 name_search_result['trust_number'] = line.xpath('td[2]/text()').get()
                 name_search_result['last_update'] = line.xpath('td[3]/text()').get()
