@@ -24,15 +24,15 @@ class ScrapSpider(CSVFeedSpider):
         :param row: a single PIN read from the pin feed file
         :return: yields a scrapy.Request to pin page
         """
-        PIN_REQUEST_URL             = 'https://www.ccrecorder.org/parcels/search/parcel/result/?line='
-        pin = row['pin']                                                # the name of the column defined in 'headers'
-        yield scrapy.Request(url=PIN_REQUEST_URL + pin,
-                             callback=self.parse_pin_page,
-                             meta={'pin':pin})
+        ADDRESS_REQUEST_URL = 'https://www.ccrecorder.org/parcels/search/parcel/result/?line='
+        address = row['address']                                           # the name of the column defined in 'headers'
+        yield scrapy.Request(url=ADDRESS_REQUEST_URL + address,
+                             callback=self.parse_address_page,
+                             meta={'requested_address':address})
 
-    def parse_pin_page(self, response):
+    def parse_address_page(self, response):
         """
-        Parses the pin page, detects if there is none, detects if
+        Parses the address page, detects if there is none, detects if
         there are multiple pins and their corresponding links on a page.
         :param response:
         :return: yields a record or a bunch of records
@@ -54,11 +54,10 @@ class ScrapSpider(CSVFeedSpider):
 
         NOT_FOUND = response.xpath(NO_PINS_FOUND_RESPONSE_XPATH).get()  # what is there
         if NOT_FOUND:                                                   # ?  (can't do without this, because of None)
-            if NOT_FOUND.startswith('No PINs'):                         # No PINs?
-                pin = response.meta['pin']
-                if len(pin) < 14:
-                    pin = pin + '0000'
-                pin14['pin'] = pin
+            if NOT_FOUND.startswith('No Addresses'):                         # No PINs?
+                street_address = response.meta['requested_address']
+                pin14['requested_address'] = street_address
+                pin14['street_address'] = street_address
                 pin14['pin_status'] = 'not'
                 yield pin14                                             # and get out of here.
 

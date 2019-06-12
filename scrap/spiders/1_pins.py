@@ -39,7 +39,7 @@ class ScrapSpider(CSVFeedSpider):
         """
         PIN_LIST_LINE_XPATH         = '//table[@id="pins_table"]/*[@id="objs_body"]//tr'  #//*[@id="objs_table"]
         PIN14_XPATH                 = 'td[1]/text()'
-        STREET_ADDRESS_XPATH        = 'td[2]/text()'
+        ADDRESS_XPATH        = 'td[2]/text()'
         CITY_XPATH                  = 'td[3]/text()'
         RECORD_NUMBER_XPATH         = 'td[4]/a/@href'
         NO_PINS_FOUND_RESPONSE_XPATH = '//html/body/div[4]/div/div/div[2]/div/div/p[2]/text()' # where it can be
@@ -73,7 +73,7 @@ class ScrapSpider(CSVFeedSpider):
             # (as many times as necessary, come back every time when done
             for line in lines_list:
                 pin14['pin']            = line.xpath(PIN14_XPATH).get()
-                pin14['street_address'] = line.xpath(STREET_ADDRESS_XPATH).get()
+                pin14['address'] = line.xpath(ADDRESS_XPATH).get()
                 pin14['city']           = line.xpath(CITY_XPATH).get().strip()
                 pin14['record_number']  = line.xpath(RECORD_NUMBER_XPATH).re('[.0-9]+')[0]
                 pin14['pin_status']     = 'valid'

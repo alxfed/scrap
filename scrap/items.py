@@ -36,13 +36,24 @@ class CCname(scrapy.Item):
 
 
 class CCpin14(scrapy.Item):
-    """pin14 item for pins spider
+    """pin14 item for 1_pins spider
     """
     pin = scrapy.Field()
     pin_status = scrapy.Field()
     record_number = scrapy.Field()
-    street_address = scrapy.Field()
+    address = scrapy.Field()
     city = scrapy.Field()
+
+class CCaddressPin14(scrapy.Item):
+    """pin14 item for 1_address_pins spider
+    """
+    pin = scrapy.Field()
+    record_number = scrapy.Field()
+    address = scrapy.Field()
+    requested_address = scrapy.Field()
+    address_status = scrapy.Field()
+    city = scrapy.Field()
+
 
 
 class CCrecordLineName(scrapy.Item):
