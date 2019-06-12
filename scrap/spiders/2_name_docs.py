@@ -77,7 +77,6 @@ class NamesSearchSpider(CSVFeedSpider):
                 yield None
 
         else:                                                           # there is a name like that
-
             lines_list = response.xpath(NAMES_LIST_LINE_XPATH)
             # a frame for the complete list of search results should be here. It and then the iteration.
             for index, line in enumerate(lines_list):             # every name_search_result one by one
