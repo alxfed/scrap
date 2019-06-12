@@ -84,13 +84,13 @@ class NamesSearchSpider(CSVFeedSpider):
                 name_search_result['requested_name'] = response.meta['name']
                 name_search_result['requested_name_status'] = 'valid'
                 name_search_result['name'] = line.xpath('td[1]/text()').get()
-                name_search_result['trust_number'] = line.xpath('td[2]/text()').get()
+                if line.xpath('td[2]/text()').get():
+                    name_search_result['trust_number'] = line.xpath('td[2]/text()').get()
                 name_search_result['last_update'] = line.xpath('td[3]/text()').get()
                 idx_name = line.xpath('td[4]/a/@href').re('[-.0-9]+')[0]  # Fuck you, Don Guernsey!
                 name_search_result['idx_name'] = idx_name
                 # go to the page of docs associated with the name and read it, then come back
-                yield scrapy.Request(url=self.NAME_DOCS_PAGE_URL+idx_name+'/',
-                                     callback=self.parse_name_docs_page(),
+                yield scrapy.Request(url=self.NAME_DOCS_PAGE_URL+idx_name+'/', callback=self.parse_name_docs_page,
                                      meta={'name_search_result': name_search_result})
 
 
@@ -102,6 +102,12 @@ class NamesSearchSpider(CSVFeedSpider):
         :return:
         """
         DOCS_NAME_LIST_XPATH = '//table[@id="docs_table"]/tbody[@id="doc_names_body"]/tr'
+
+        # FUCK YOU, IDIOT DON GUERNSEY ! (https://www.linkedin.com/in/don-guernsey-8412663/)
+        response = response.replace(body=re.sub('>\s*<', '><',
+                                                response.body.replace('\n', ''),
+                                                0, re.M))
+        # The stupid fuck dumped this shit on the page to make it 'unscrapable'. :) Imbecile peasant from Indiana woods.
 
         name_search_result = CCnameSearchResult()
         name_search_result = response.meta['name_search_result']
