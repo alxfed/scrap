@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import re
-from scrapy.selector import Selector
 from scrapy.spiders import CSVFeedSpider
 from scrap.items import CCpin14
 
