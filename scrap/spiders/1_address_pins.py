@@ -13,7 +13,7 @@ class ScrapSpider(CSVFeedSpider):
     """
     name = '1_address_pins'                     # 1 means 1-level.
     allowed_domains = ['ccrecorder.org']
-    start_urls = ['https://alxfed.github.io/docs/address_feed2.csv']        # the list of PINs to be verified.
+    start_urls = ['https://alxfed.github.io/docs/address_feed.csv']        # the list of PINs to be verified.
     headers = ['address']
 
     def parse_row(self, response, row):
@@ -36,7 +36,7 @@ class ScrapSpider(CSVFeedSpider):
         :param response:
         :return: yields a record or a bunch of records
         """
-        PIN_LIST_LINE_XPATH         = '//table[@id="pins_table"]/*[@id="objs_body"]//tr'  #//*[@id="objs_table"]
+        PIN_LIST_LINE_XPATH         = '//table[@id="objs_table"]/*[@id="objs_body"]//tr'  #//*[@id="objs_table"]
         PIN14_XPATH                 = 'td[1]/text()'
         ADDRESS_XPATH               = 'td[2]/text()'
         CITY_XPATH                  = 'td[3]/text()'
@@ -71,7 +71,8 @@ class ScrapSpider(CSVFeedSpider):
                 pin14 = CCaddressPin14()
                 pin14['pin']            = line.xpath(PIN14_XPATH).get()
                 pin14['address']        = line.xpath(ADDRESS_XPATH).get()
-                pin14['requested_address'] = response.meta['requested address']
+                requested_address = response.meta['requested_address']
+                pin14['requested_address'] =  requested_address
                 pin14['city']           = line.xpath(CITY_XPATH).get().strip()
                 pin14['record_number']  = line.xpath(RECORD_NUMBER_XPATH).re('[.0-9]+')[0]
                 pin14['address_status'] = 'valid'
