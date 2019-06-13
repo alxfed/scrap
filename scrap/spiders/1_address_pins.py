@@ -13,7 +13,7 @@ class ScrapSpider(CSVFeedSpider):
     """
     name = '1_address_pins'                     # 1 means 1-level.
     allowed_domains = ['ccrecorder.org']
-    start_urls = ['https://alxfed.github.io/docs/address_feed1.csv']        # the list of PINs to be verified.
+    start_urls = ['https://alxfed.github.io/docs/address_feed2.csv']        # the list of PINs to be verified.
     headers = ['address']
 
     def parse_row(self, response, row):
