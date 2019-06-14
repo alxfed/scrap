@@ -77,12 +77,20 @@ class ScrapSpider(CSVFeedSpider):
             # extract the number(s) for the record(s), jump to the docs page
             # (as many times as necessary, come back every time when done
             for line in lines_list:
-                pin14['pin']            = line.xpath(PIN14_XPATH).get()
-                pin14['address'] = line.xpath(ADDRESS_XPATH).get()
-                pin14['city']           = line.xpath(CITY_XPATH).get().strip()
+                pin14['pin'] = line.xpath(PIN14_XPATH).get()
+                address = line.xpath(ADDRESS_XPATH).get()
+                if address:
+                    pin14['address'] = address
+                else:
+                    pin14['address'] = None
+                city = line.xpath(CITY_XPATH).get().strip()
+                if city:
+                    pin14['city'] = city
+                else:
+                    pin14['city'] = 'CHICAGO'
                 pin14['record_number']  = line.xpath(RECORD_NUMBER_XPATH).re('[.0-9]+')[0]
                 pin14['pin_status']     = 'valid'
                 yield pin14
 
 
-# finished on June 7-th, 2019.
+# finished on June 14-th, 2019.
